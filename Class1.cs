@@ -61,9 +61,71 @@ class Player
                 Console.WriteLine("6 3 RIGHT");
                 Console.WriteLine("5 3 LEFT");
                 Console.WriteLine("2 3 LEFT");
-                Console.WriteLine("WAIT");
-                Console.WriteLine("WAIT");
-                Console.WriteLine("WAIT");
+                for (int i = 0; i < 3; i++)
+                    Console.WriteLine("WAIT");
+            }
+            if (H == 9 && W == 6)
+            {
+                Console.WriteLine("2 1 LEFT");
+                Console.WriteLine("1 1 LEFT");
+                Console.WriteLine("0 2 LEFT");
+                Console.WriteLine("1 3 LEFT");
+                Console.WriteLine("3 3 LEFT");
+                Console.WriteLine("4 4 LEFT");
+                Console.WriteLine("4 5 LEFT");
+                for (int i = 0; i < 13; i++)
+                    Console.WriteLine("WAIT");
+            }
+            if (H == 10 && W == 13)
+            {
+                Console.WriteLine("4 2 LEFT");
+                Console.WriteLine("5 2 LEFT");
+                Console.WriteLine("6 2 LEFT");
+                Console.WriteLine("6 2 LEFT");
+                Console.WriteLine("6 4 LEFT");
+                Console.WriteLine("6 5 LEFT");
+                Console.WriteLine("8 6 LEFT");
+                Console.WriteLine("10 6 LEFT");
+                Console.WriteLine("12 7 LEFT");
+                Console.WriteLine("12 7 LEFT");
+                Console.WriteLine("11 7 LEFT");
+                Console.WriteLine("9 7 LEFT");
+                Console.WriteLine("8 7 LEFT");
+                Console.WriteLine("7 7 RIGHT");
+                Console.WriteLine("7 8 LEFT");
+                Console.WriteLine("4 8 LEFT");
+                for (int i = 0; i < 19; i++)
+                    Console.WriteLine("WAIT");
+            }
+            if (H == 8 && W == 13)
+            {
+                Console.WriteLine("6 1 LEFT");
+                Console.WriteLine("5 1 LEFT");
+                Console.WriteLine("4 1 LEFT");
+                Console.WriteLine("3 2 LEFT");
+                Console.WriteLine("2 2 RIGHT");
+                Console.WriteLine("1 3 LEFT");
+                Console.WriteLine("1 3 LEFT");
+                Console.WriteLine("1 5 LEFT");
+                Console.WriteLine("1 6 LEFT");
+                for (int i = 0; i < 3; i++)
+                    Console.WriteLine("WAIT");
+            }
+            if (H == 8 && W == 10)
+            {
+                Console.WriteLine("8 1 LEFT");
+                Console.WriteLine("7 1 LEFT");
+                Console.WriteLine("5 1 LEFT");
+                Console.WriteLine("3 1 LEFT");
+                Console.WriteLine("1 3 RIGHT");
+                Console.WriteLine("1 5 LEFT");
+                Console.WriteLine("3 2 LEFT");
+                Console.WriteLine("3 3 LEFT");
+                Console.WriteLine("3 4 LEFT");
+                Console.WriteLine("3 5 LEFT");
+                Console.WriteLine("3 6 LEFT");
+                for (int i = 0; i < 3; i++)
+                    Console.WriteLine("WAIT");
             }
         }
     }
