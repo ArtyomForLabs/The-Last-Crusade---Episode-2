@@ -5,10 +5,34 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
+class Rock
+{
+    int X = 0;
+    int Y = 0;
+    string POS = "";
+
+    public Rock(int x, int y, string pos)
+    {
+        X = x;
+        Y = y;
+        POS = pos;
+    }
+
+    public int XR
+    {
+        get { return X; }
+    }
+
+    public int YR
+    {
+        get { return Y; }
+    }
+
+    public string POSR
+    {
+        get { return POS; }
+    }
+}
 
 class Room
 {
@@ -70,6 +94,16 @@ class Room
         if (type == baseType)
             return false;
         return true;
+    }
+
+    public bool needRotate()
+    {
+        return (type == baseType) ? false : true;
+    }
+
+    public bool canRotate()
+    {
+        return (baseType < 2) ? false : true;
     }
 
     public int[] getNextXY(string from)
@@ -143,20 +177,39 @@ class Room
                 break;
             }
         }
+        //Console.Error.WriteLine("before type:{0} base:{1}", type, baseType);
+
+        //Console.Error.WriteLine("after type:{0} base:{1}", type, baseType);
         if (my_index < index)
             if (index - my_index >= trans.Length - index + my_index)
-                for (int i = 0; i < trans.Length - index + my_index; i++)
-                    Console.WriteLine("{0} {1} LEFT", YI, XI);
+            {
+                //for (int i = 0; i < trans.Length - index + my_index; i++)
+                //Console.Error.WriteLine("{0} {1} LEFT", YI, XI);
+                Console.WriteLine("{0} {1} LEFT", YI, XI);
+                baseType = trans[(my_index == 0) ? trans.Length - 1 : --my_index];
+            }
             else
-                for (int i = 0; i < index - my_index; i++)
-                    Console.WriteLine("{0} {1} RIGHT", YI, XI);
+            {
+                //for (int i = 0; i < index - my_index; i++)
+                //Console.Error.WriteLine("{0} {1} RIGHT", YI, XI);
+                Console.WriteLine("{0} {1} RIGHT", YI, XI);
+                baseType = trans[++my_index % trans.Length];
+            }
         else
             if (my_index - index >= trans.Length - my_index + index)
-                for (int i = 0; i < trans.Length - my_index + index; i++)
-                    Console.WriteLine("{0} {1} RIGHT", YI, XI);
+            {
+                //for (int i = 0; i < trans.Length - my_index + index; i++)
+                //Console.Error.WriteLine("{0} {1} RIGHT", YI, XI);
+                Console.WriteLine("{0} {1} RIGHT", YI, XI);
+                baseType = trans[++my_index % trans.Length];
+            }
             else
-                for (int i = 0; i < my_index - index; i++)
-                    Console.WriteLine("{0} {1} LEFT", YI, XI);
+            {
+                //for (int i = 0; i < my_index - index; i++)
+                //Console.Error.WriteLine("{0} {1} LEFT", YI, XI);
+                Console.WriteLine("{0} {1} LEFT", YI, XI);
+                baseType = trans[(my_index == 0) ? trans.Length - 1 : --my_index];
+            }
         return 1;
     }
 
@@ -195,11 +248,11 @@ class Player
     static void Main(string[] args)
     {
         string[] inputs;
-
+        ArrayList rocks = new ArrayList();
         inputs = Console.ReadLine().Split(' ');
         W = int.Parse(inputs[0]); // number of columns.
         H = int.Parse(inputs[1]); // number of rows.
-        Console.Error.WriteLine("{0} {1}", W, H);
+        //Console.Error.WriteLine("{0} {1}", W, H);
         rooms = new Room[H, W];
         for (int i = 0; i < H; i++)
         {
@@ -207,9 +260,9 @@ class Player
             for (int j = 0; j < W; j++)
             {
                 rooms[i, j] = new Room(i, j, int.Parse(LINE[j]));
-                Console.Error.Write(LINE[j] + " ");
+                //Console.Error.Write(LINE[j] + " ");
             }
-            Console.Error.WriteLine();
+            //Console.Error.WriteLine();
         }
         int EX = int.Parse(Console.ReadLine());
         rooms[H - 1, EX].EXIT = true;
@@ -223,33 +276,57 @@ class Player
             int XI = int.Parse(inputs[0]);
             int YI = int.Parse(inputs[1]);
             string POSI = inputs[2];
-            int R = int.Parse(Console.ReadLine());
-
-            for (int i = 0; i < R; i++)
-            {
-                inputs = Console.ReadLine().Split(' ');
-                int XR = int.Parse(inputs[0]);
-                int YR = int.Parse(inputs[1]);
-                string POSR = inputs[2];
-            }
 
             if (!flag)
             {
                 search(YI, XI, POSI);
                 count = trace.Count;
                 flag = true;
-                Console.Error.WriteLine("Debug messages count=" + count);
+                //Console.Error.WriteLine("Debug messages count="+ count);
+            }
+
+            int R = int.Parse(Console.ReadLine());
+            Rock r1 = null;
+            //Console.Error.WriteLine(R);
+            if (R > 0)
+            {
+                inputs = Console.ReadLine().Split(' ');
+                r1 = new Rock(int.Parse(inputs[1]), int.Parse(inputs[0]), inputs[2]);
+                rocks.Clear();
+                for (int i = 0; i < R - 1; i++)
+                {
+                    inputs = Console.ReadLine().Split(' ');
+                    Rock r2 = new Rock(int.Parse(inputs[1]), int.Parse(inputs[0]), inputs[2]);
+                    rocks.Add(r2);
+                }
+                rocks.Reverse();
             }
 
             if (trace.Count > 0)
             {
-                Room test = trace.Pop() as Room;
-                while (test.rotate() == 0)
+                Room test = trace.Peek() as Room;
+                if (!test.needRotate())
                 {
-                    wait++;
-                    if (trace.Count == 0) break;
                     test = trace.Pop() as Room;
+                    if (R > 0 && kill_rocks(YI, XI, POSI, r1) == 1)
+                    {
+                        wait--;
+                        continue;
+                    }
+
+                    while (test.rotate() == 0)
+                    {
+
+                        wait++;
+                        if (trace.Count == 0) break;
+                        test = trace.Peek() as Room;
+                        if (!test.needRotate())
+                            test = trace.Pop() as Room;
+                    }
                 }
+                else
+                    test.rotate();
+
             }
             if (trace.Count == 0)
                 for (int i = 0; i < wait + 1; i++)
@@ -308,6 +385,27 @@ class Player
                     return 1;
             }
         } while (rooms[next[0], next[1]].nextType());
+        return 0;
+    }
+
+    static int kill_rocks(int xi, int yi, string posi, Rock r)
+    {
+        //Console.Error.WriteLine("{0} {1} {2}", r.XR, r.YR, r.POSR);
+        //Console.Error.WriteLine("{0} {1}", xi, yi);
+        int[] next = rooms[r.XR, r.YR].getNextXY(r.POSR);
+        //Console.Error.WriteLine("next {0} {1}", next[0], next[1]);
+        if (xi != next[0] || yi != next[1])
+        {
+            //Console.Error.WriteLine("equal1");
+            int[] nexti = rooms[xi, yi].getNextXY(posi);
+            if (!rooms[nexti[0], nexti[1]].needRotate()
+                && rooms[next[0], next[1]].canRotate())
+            {
+                //Console.Error.WriteLine("equal2 {0} {1}", nexti[0], nexti[1]);
+                Console.WriteLine("{0} {1} RIGHT", next[1], next[0]);
+                return 1;
+            }
+        }
         return 0;
     }
 }
