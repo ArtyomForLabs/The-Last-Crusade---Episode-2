@@ -18,8 +18,6 @@ class Room
     int baseType = 0;
     int index = 0;
     int[] trans;
-    //string direct = "";
-    //string from = "";
     bool EX = false;
 
     public Room(int x, int y, int t)
@@ -28,7 +26,6 @@ class Room
         Y = y;
         baseType = t;
         type = t;
-        //Console.WriteLine(X.ToString() + " " + Y.ToString()+ " " + baseType);
 
         switch (t)
         {
@@ -121,7 +118,7 @@ class Room
             case 4:
                 return (from.Equals("RIGHT")) ? "TOP" : "RIGHT";
             case 5:
-                return (from.Equals("LEFT")) ? "TOP" : "RIGHT";
+                return (from.Equals("LEFT")) ? "TOP" : "LEFT";
             case 10:
                 return "RIGHT";
             case 11:
@@ -135,7 +132,6 @@ class Room
     {
         if (type == baseType)
         {
-            //Console.WriteLine("Console.WriteLine(\"WAIT\");");
             return 0;
         }
         int my_index = 0;
@@ -179,18 +175,6 @@ class Room
     {
         get { return Y; }
     }
-
-    /*public string Direct
-    {
-        get { return direct; }
-        set { direct = value; }
-    }
-
-    public string FROM
-    {
-        get { return from; }
-        set { from = value; }
-    }*/
 
     public int TYPE
     {
@@ -240,7 +224,7 @@ class Player
             int YI = int.Parse(inputs[1]);
             string POSI = inputs[2];
             int R = int.Parse(Console.ReadLine());
-            //Console.Error.WriteLine("Debug messages...{0}, {1}, {2}", XI,YI, POSI);
+
             for (int i = 0; i < R; i++)
             {
                 inputs = Console.ReadLine().Split(' ');
@@ -256,8 +240,6 @@ class Player
                 flag = true;
                 Console.Error.WriteLine("Debug messages count=" + count);
             }
-            // Write an action using Console.WriteLine()
-            // To debug: Console.Error.WriteLine("Debug messages...");
 
             if (trace.Count > 0)
             {
@@ -277,64 +259,55 @@ class Player
     }
     static int search(int xi, int yi, string posi)
     {
-        //Console.Error.WriteLine("Debug messages...{0}, {1}, {2}", xi,yi, posi);
         int[] next = rooms[xi, yi].getNextXY(posi);
         if (next == null)
         {
-            Console.Error.WriteLine("Debug messages NULL");
-            //Console.WriteLine("next=null");
+            //Console.Error.WriteLine("Debug messages NULL");
             return -1;
         }
         if (next[0] < 0 || next[0] >= H || next[1] < 0 || next[1] >= W)
         {
-            Console.Error.WriteLine("Debug messages OUT {0} {1}", next[0], next[1]);
-            //Console.WriteLine("Out grid: (" + next[0] + ", " + next[1] + ") for " + xi + "," + yi);
+            //Console.Error.WriteLine("Debug messages OUT {0} {1}", next[0], next[1]);            
             return -1;
         }
-        while (true)
+        if (rooms[next[0], next[1]].TYPE == 0)
+            return 0;
+        do
         {
-            if (rooms[next[0], next[1]].TYPE == 0)
-                return 0;
-            do
+            switch (rooms[xi, yi].getOut(posi))
             {
-                switch (rooms[xi, yi].getOut(posi))
-                {
-                    case "TOP":
-                        if (!top.Contains(rooms[next[0], next[1]].TYPE))
-                            continue;
-                        break;
-                    case "LEFT":
-                        if (!left.Contains(rooms[next[0], next[1]].TYPE))
-                            continue;
-                        break;
-                    case "RIGHT":
-                        if (!right.Contains(rooms[next[0], next[1]].TYPE))
-                            continue;
-                        break;
-                }
-                if (rooms[next[0], next[1]].EXIT)
-                {
-                    //Console.WriteLine("Exit is found!");
-                    //Console.WriteLine(next[0] + " " + next[1]);
-                    Console.Error.WriteLine("Debug messages EXIT IS FOUND");
+                case "TOP":
+                    if (!top.Contains(rooms[next[0], next[1]].TYPE))
+                        continue;
+                    break;
+                case "LEFT":
+                    if (!left.Contains(rooms[next[0], next[1]].TYPE))
+                        continue;
+                    break;
+                case "RIGHT":
+                    if (!right.Contains(rooms[next[0], next[1]].TYPE))
+                        continue;
+                    break;
+            }
+            if (rooms[next[0], next[1]].EXIT)
+            {
+                //Console.Error.WriteLine("Debug messages EXIT IS FOUND");
+                return 1;
+            }
+            switch (search(next[0], next[1], rooms[xi, yi].getOut(posi)))
+            {
+                case -1:
+                    //Console.Error.WriteLine("Debug messages -1");
+                    break;
+                case 0:
+                    //Console.Error.WriteLine("Debug messages 0");
+                    break;
+                case 1:
+                    //Console.Error.WriteLine("Debug messages to push");
+                    trace.Push(rooms[next[0], next[1]]);
                     return 1;
-                }
-                switch (search(next[0], next[1], rooms[xi, yi].getOut(posi)))
-                {
-                    case -1:
-                        Console.Error.WriteLine("Debug messages -1");
-                        return -1;
-                    case 0:
-                        Console.Error.WriteLine("Debug messages 0");
-                        //return 0;
-                        break;
-                    case 1:
-                        //Console.WriteLine(next[0] + " " + next[1]);
-                        //Console.Error.WriteLine("Debug messages to push");
-                        trace.Push(rooms[next[0], next[1]]);
-                        return 1;
-                }
-            } while (rooms[next[0], next[1]].nextType());
-        }
+            }
+        } while (rooms[next[0], next[1]].nextType());
+        return 0;
     }
 }
